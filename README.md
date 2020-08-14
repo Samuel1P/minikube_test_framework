@@ -3,5 +3,9 @@ This repo has methods to retrieve and manipulate kubernetes objects in a single 
 Also, contains kuberenetes definition files which I have created for creating the kubernetest objects in my node.
 
 k8s_api_module.py - File contains the methods that interact with kubernetes cluster
+
 k8s_config.ini - Configuration info required by the k8s_api_module.py
+
 KUBECONFIG - Place your kubeconfig file in the dummy file location.
+
+k8s_definition_files - This folder contains sample kubernetes definition YAML files.
