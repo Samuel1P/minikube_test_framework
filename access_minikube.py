@@ -5,44 +5,51 @@ k8_config.load_kube_config(config_file=kube_config)
 v1 = client.CoreV1Api()
 v1_apps = client.AppsV1Api()
 
-
-def get_pods_details_in_default_namespace():
+class kubernetes_library:
     """
-    This method fetches all the pod name, pod ip and pod status in the default namespace.
-    :return: None
+    Kuberntes library contains methods that will connect to a kubernetes cluster and performs fetching or manipulation of kubernetes objects running in the cluster.
     """
-    pod_list = v1.list_namespaced_pod("default")
-    for pod in pod_list.items:
-        print(f" Pod Name : {pod.metadata.name}, "
-              f"Pod Status : {pod.status.phase}, "
-              f"Pod IP : {pod.status.pod_ip}")
+    def get_pods_details_in_default_namespace(self):
+        """
+        This method fetches all the pod name, pod ip and pod status in the default namespace.
+        currently I am printing the output, In a real environment we can return this information.
+        :return: None
+        """
+        pod_list = v1.list_namespaced_pod("default")
+        for pod in pod_list.items:
+            print(f" Pod Name : {pod.metadata.name}, "
+                  f"Pod Status : {pod.status.phase}, "
+                  f"Pod IP : {pod.status.pod_ip}")
 
-def get_pods_details_in_dynamic_namespace(ns):
+    def get_pods_details_in_user_defined_namespace(self, ns):
+        """
+        This method fetches all the pod name, pod ip and pod status in the user defined namespace.
+        currently I am printing the output, In a real environment we can return this information.
+        :param ns:
+        :return: None
+        """
+        pod_list = v1.list_namespaced_pod(ns)
+        for pod in pod_list.items:
+            print(f" Pod Name : {pod.metadata.name}, "
+                  f"Pod Status : {pod.status.phase}, "
+                  f"Pod IP : {pod.status.pod_ip}")
 
-    pod_list = v1.list_namespaced_pod(ns)
-    for pod in pod_list.items:
-        print(f" Pod Name : {pod.metadata.name}, "
-              f"Pod Status : {pod.status.phase}, "
-              f"Pod IP : {pod.status.pod_ip}")
+    def watch_pods_in_default_ns(self):
+        """
+        This method watches the event type, pod name and pod status of the default namespace and print when there is a change.
+        :return: None
+        """
+        stream = watch.Watch().stream(v1.list_namespaced_pod, "default")
+        for event in stream:
+            print (event['type'], event['object'].metadata.name, event['object'].status.phase)
 
-def watch_pods_in_default_ns():
-    """
-    This method watches the event type, pod name and pod status of the default namespace and print when there is a change.
-    :return: None
-    """
-    stream = watch.Watch().stream(v1.list_namespaced_pod, "default")
-    for event in stream:
-        print (event['type'], event['object'].metadata.name, event['object'].status.phase)
-
-def get_deployments_in_a_ns(ns=''):
-    deployments = v1_apps.list_namespaced_deployment(ns)
-    for i, j in enumerate(deployments.items):
-        print (f"deployments in all ns: {deployments.items[i].metadata.name}")
-
-
-if __name__ == "__main__":
-    #get_pods_details_in_default_namespace()
-    #get_pods_details_in_dynamic_namespace("kube-system")
-    #watch_pods_in_default_ns()
-    #get_deployments_in_a_ns("")
-    pass
+    def get_deployments_in_a_ns(ns=''):
+        """
+        This method fetches the deployment info of the namespace provided, if namespace is empty, deployments in default namespace is provided.
+        currently I am printing the output, In a real environment we can return this information.
+        :param ns:
+        :return: None
+        """
+        deployments = v1_apps.list_namespaced_deployment(ns)
+        for i, j in enumerate(deployments.items):
+            print (f"deployments info: {deployments.items[i].metadata.name}")
