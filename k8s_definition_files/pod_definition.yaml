@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-app
+  labels:
+    env: test
+    tier: backend
+spec:
+  containers:
+    - name: tiny-http
+      image: hjacobs/tiny-docker-http-test
