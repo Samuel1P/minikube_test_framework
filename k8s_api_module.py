@@ -32,11 +32,16 @@ class kubernetes_library:
         currently I am printing the output, In a real environment we can return this information.
         :return: None
         """
-        pod_list = v1.list_namespaced_pod("default")
-        for pod in pod_list.items:
-            print(f" Pod Name : {pod.metadata.name}, "
-                  f"Pod Status : {pod.status.phase}, "
-                  f"Pod IP : {pod.status.pod_ip}")
+        try:
+            pod_list = v1.list_namespaced_pod("default")
+            for pod in pod_list.items:
+                print(f" Pod Name : {pod.metadata.name}, "
+                      f"Pod Status : {pod.status.phase}, "
+                      f"Pod IP : {pod.status.pod_ip}")
+        except ApiException as e:
+            print (f"API Error : {e}")
+        except Exception as e:
+            print (f"Error: {e}")
 
     def get_pods_details_in_user_defined_namespace(self, ns):
         """
@@ -45,34 +50,47 @@ class kubernetes_library:
         :param ns:
         :return: None
         """
-        pod_list = v1.list_namespaced_pod(ns)
-        for pod in pod_list.items:
-            print(f" Pod Name : {pod.metadata.name}, "
-                  f"Pod Status : {pod.status.phase}, "
-                  f"Pod IP : {pod.status.pod_ip}")
-
+        try:
+            pod_list = v1.list_namespaced_pod(ns)
+            for pod in pod_list.items:
+                print(f" Pod Name : {pod.metadata.name}, "
+                      f"Pod Status : {pod.status.phase}, "
+                      f"Pod IP : {pod.status.pod_ip}")
+        except ApiException as e:
+            print (f"API Error : {e}")
+        except Exception as e:
+            print (f"Error: {e}")
     def get_kubernetes_version_info(self):
         """
         fetching the kubernetes version installed on the host
         :return: None
         """
-        response = requests.get(urljoin(base_url, 'version'), headers=def_header)
-        debug()
-        if response.status_code == 200:
-            print (f" Kubernetes version installed is {response.text}")
-        else:
-            print ("Kubernetes Version Not available")
+        try:
+            res = requests.get(urljoin(base_url, 'version'), headers=def_header)
+            debug()
+            if res.status_code == 200:
+                print (f" Kubernetes version installed is {res.text}")
+            else:
+                print ("Kubernetes Version Not available")
+        except ApiException as e:
+            print (f"Error : {e}")
+        except Exception as e:
+            print (f"Error: {e}")
 
     def get_api_versions_available(self):
         """
         This method lists all the supported API's and their version in the kubernetes cluster
         :return: None
         """
-        print("Supported APIs (* is preferred version):")
-        print (v.get_api_versions().versions)
-        for api in client.ApisApi().get_api_versions().groups:
-            print (f"{api.versions[0].group_version} - {api.versions[0].version}")
-
+        try:
+            print("Supported APIs:")
+            print (v.get_api_versions().versions)
+            for api in client.ApisApi().get_api_versions().groups:
+                print (f"{api.versions[0].group_version} - {api.versions[0].version}")
+        except ApiException as e:
+            print (f"API Error : {e}")
+        except Exception as e:
+            print (f"Error: {e}")
 
     def watch_pods_in_default_ns(self):
         """
@@ -80,9 +98,14 @@ class kubernetes_library:
 
         :return: None
         """
-        stream = watch.Watch().stream(v1.list_namespaced_pod, "default")
-        for event in stream:
-            print (event['type'], event['object'].metadata.name, event['object'].status.phase)
+        try:
+            stream = watch.Watch().stream(v1.list_namespaced_pod, "default")
+            for event in stream:
+                print (event['type'], event['object'].metadata.name, event['object'].status.phase)
+        except ApiException as e:
+            print (f"API Error : {e}")
+        except Exception as e:
+            print (f"Error: {e}")
 
     def get_deployments_in_a_ns(self, ns=''):
         """
@@ -91,9 +114,14 @@ class kubernetes_library:
         :param ns:
         :return: None
         """
-        deployments = v1_apps.list_namespaced_deployment(ns)
-        for i, j in enumerate(deployments.items):
-            print (f"deployments info: {deployments.items[i].metadata.name}")
+        try:
+            deployments = v1_apps.list_namespaced_deployment(ns)
+            for i, j in enumerate(deployments.items):
+                print (f"deployments info: {deployments.items[i].metadata.name}")
+        except ApiException as e:
+            print (f"API Error : {e}")
+        except Exception as e:
+            print (f"Error: {e}")
 
 
 
