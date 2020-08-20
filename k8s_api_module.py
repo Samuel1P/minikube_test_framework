@@ -123,9 +123,42 @@ class kubernetes_library:
         except Exception as e:
             print (f"Error: {e}")
 
+    def get_available_namespace(self):
+        """
+        this method gets all namespaces available in the cluster
+        :param
+        :return:
+        """
+        try:
+            api_res = v1.list_namespace()
+            namespace_names = [i.metadata.name for i in api_res.items]
+            print(namespace_names)
+        except ApiException as e:
+            print (f"API Error : {e}")
+        except Exception as e:
+            print (f"Error: {e}")
 
+    def get_if_namespace_is_present(self, ns):
+        """
+        this method checks if a namespace available in the cluster
+        :param ns
+        :return:
+        """
+        try:
+            api_res = v1.list_namespace()
+            namespace_names = [i.metadata.name for i in api_res.items]
+            if ns in namespace_names:
+                print (f"{ns} namespace is present")
+            else:
+                print (f"{ns} namespace is not present")
+        except ApiException as e:
+            print(f"API Error : {e}")
+        except Exception as e:
+            print(f"Error: {e}")
 
-class_obj = kubernetes_library()
-# class_obj.get_pods_details_in_default_namespace()
-# class_obj.get_deployments_in_a_ns()
-# class_obj.get_api_versions_available()
+k8s_obj = kubernetes_library()
+# k8s_obj.get_pods_details_in_default_namespace()
+# k8s_obj.get_deployments_in_a_ns()
+# k8s_obj.get_api_versions_available()
+k8s_obj.get_available_namespace()
+k8s_obj.get_if_namespace_is_present('default')
