@@ -9,4 +9,4 @@ k8s_config.ini - Configuration info required by the k8s_api_module.py
 
 KUBECONFIG - Place your kubeconfig file in the dummy file location.
 
-k8s_definition_files - This folder contains sample kubernetes definition YAML files.
+k8s_definition_files - This folder contains kubernetes definition YAML files.
